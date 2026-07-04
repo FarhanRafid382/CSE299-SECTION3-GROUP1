@@ -9,6 +9,7 @@ function Login() {
                 <label htmlFor="password">Password</label>
                 <input type="password" placeholder="Enter Password" id="password" />
                 <button type="submit">Login</button>
+                <button type="button">Forgot Password</button>
             </form>
         </div>
        

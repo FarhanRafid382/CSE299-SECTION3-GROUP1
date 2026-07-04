@@ -19,6 +19,8 @@ function Register() {
                     <option value="others" >Others </option>
                 
                 </select>
+                <label htmlFor="phone">Contact Number</label>
+                <input type="tel" placeholder="Enter Your Contact Number" id="phone" />
                 
                 <button type="submit">Register</button>
             </form>
