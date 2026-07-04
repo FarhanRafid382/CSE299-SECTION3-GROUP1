@@ -1,6 +1,11 @@
 function Home() {
     return (
-        <h1>Welcome to our store</h1>
+        <div>
+            <h1>Welcome to our store</h1>
+            <button type="submit"> Shop Now</button>
+
+        </div>
+        
     )
 }
 

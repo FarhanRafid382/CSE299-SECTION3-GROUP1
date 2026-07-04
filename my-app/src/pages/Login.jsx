@@ -2,10 +2,14 @@ function Login() {
     return (
         <div>
             <h1>Login Page</h1>
-            <h2>Email</h2>
-            <form>Email</form>
-            <h2>Password</h2>
-            <form>Passowrd</form>
+            
+            <form>
+                <label htmlFor="email">Email</label>
+                <input type="email" placeholder="Enter Email" id="email" />
+                <label htmlFor="password">Password</label>
+                <input type="password" placeholder="Enter Password" id="password" />
+                <button type="submit">Login</button>
+            </form>
         </div>
        
     )
