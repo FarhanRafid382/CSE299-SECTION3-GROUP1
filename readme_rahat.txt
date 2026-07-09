@@ -8,6 +8,7 @@ step 5: create django app:
                 python manage.py startapp cart
                 python manage.py startapp orders
                 python manage.py startapp chat
+                python manage.py startapp core
 step 6: python manage.py createsuperuser
         Username (leave blank to use 'abumdashrafulrahat'): rahat
         Email address: abumdrahat@gmail.com
@@ -16,3 +17,14 @@ step 6: python manage.py createsuperuser
 step 7: pip freeze > requirements.txt
         just write :pip install -r requirements.txt
         to install all dependency 
+step 8: for docker run --> docker compose up --build
+        for docker to stop --> docker compose down
+step 9: to work with images i need pillow a python framework to store images to db
+step 10: after writing all models:-
+        python manage.py makemigrations
+        python manage.py migrate
+step 11: to see things in django-admin register everything in app/admin:
+        register models in django/admin
+step 12: now write serizlizers:
+        create serizlizers.py file on apps then serizlize
+        the models of that app.
