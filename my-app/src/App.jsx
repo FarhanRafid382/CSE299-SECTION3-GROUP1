@@ -6,11 +6,15 @@ import Navbar from "./components/Navbar";
 import Products from "./pages/Products";
 import { useState } from "react";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderHistory from "./pages/OrderHistory";
+import Chat from "./pages/Chat";
 
 
 
 function App() {
   const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   function addToCart(product) {
     const existingItem = cart.find((item) => item.id === product.id);
@@ -25,7 +29,21 @@ function App() {
     } else {
       setCart([...cart, { ...product, quantity: 1 }]);
     }
-}
+  }
+
+  function removeFromCart(id) {
+    setCart(cart.filter((item) => item.id !== id));
+  }
+
+  function clearCart() {
+    setCart([]);
+  }
+
+  function placeOrder(order) {
+    setOrders([...orders, order]);
+    setCart([]);
+  }
+
 
 
   return (
@@ -36,7 +54,10 @@ function App() {
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/products" element={<Products addToCart={addToCart} />} />
-    <Route path="/cart" element={<Cart cart={cart} />} />
+    <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
+    <Route path="/checkout" element={<Checkout cart={cart} placeOrder={placeOrder} />} />
+    <Route path="/orderhistory" element={<OrderHistory orders={orders} />} />
+    <Route path="/chat" element={<Chat />} />
     </Routes>
     </BrowserRouter>
   );  

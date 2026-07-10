@@ -1,4 +1,4 @@
-function Cart({ cart }) {
+function Cart({ cart, removeFromCart }) {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   
   return (
@@ -7,13 +7,16 @@ function Cart({ cart }) {
       {cart.map((item) => (
         <div key={item.id}>
           <h3>{item.name}</h3>
-          <p>${item.price.toFixed(2)}</p>
+          <p>৳{item.price.toFixed(2)}</p>
           <p>Qty: {item.quantity}</p>
+          <button onClick={() => removeFromCart(item.id)}>Remove</button>
         </div>
       ))}
-      <h2>Total: ${total.toFixed(2)}</h2>
+      <h2>Total: ৳{total.toFixed(2)}</h2>
     </div>
   );
+
+  
 }
 
 export default Cart;
