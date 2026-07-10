@@ -10,11 +10,23 @@ const products = [
 
 function Products({ addToCart }) {
 
+    const [search, setSearch] = useState("");
+
+    const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <div>
             <h1>Products</h1>
+            <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            />
             <div>
-                {products.map(product => (
+                {filteredProducts.map(product => (
                     <div key={product.id}>
                         <h3>{product.name}</h3>
                         <p>৳{product.price.toFixed(2)}</p>

@@ -1,13 +1,22 @@
 import { useState } from 'react';
 function Checkout({ cart, placeOrder }) {
     const [name, setName] = useState('');
-    const [address, setAddress] = useState('');
+    const [shippingAddress, setShippingAddress] = useState("");
+    const [billingAddress, setBillingAddress] = useState("");
     const [paymentMethod, setPaymentMethod] = useState('creditCard');
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     function handleSubmit(e) {
         e.preventDefault();
-        const order = { name, address, paymentMethod, items: cart, total, date: new Date().toLocaleDateString() };
+        const order = { 
+            name, 
+            shippingAddress, 
+            billingAddress, 
+            paymentMethod, 
+            items: cart, 
+            total, 
+            date: new Date().toLocaleDateString()
+        };
         placeOrder(order);
     }
 
@@ -31,8 +40,13 @@ function Checkout({ cart, placeOrder }) {
                 </label>
                 <br />
                 <label>
-                    Address:
-                    <input type="text" name="address" value={address} onChange={(e) => setAddress(e.target.value)} required />
+                    Shipping Address:
+                    <input type="text" name="shippingAddress" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} required />
+                </label>
+                <br />
+                <label>
+                    Billing Address:
+                    <input type="text" name="billingAddress" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
                 </label>
                 <br />
                 <label>

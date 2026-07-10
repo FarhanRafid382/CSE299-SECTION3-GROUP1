@@ -8,6 +8,7 @@ import { useState } from "react";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderHistory from "./pages/OrderHistory";
+import OrderDetail from "./pages/OrderDetails";
 import Chat from "./pages/Chat";
 
 
@@ -56,7 +57,8 @@ function App() {
     <Route path="/products" element={<Products addToCart={addToCart} />} />
     <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
     <Route path="/checkout" element={<Checkout cart={cart} placeOrder={placeOrder} />} />
-    <Route path="/orderhistory" element={<OrderHistory orders={orders} />} />
+    <Route path="/orders" element={<OrderHistory orders={orders} />} />
+    <Route path="/orders/:id" element={<OrderDetail orders={orders} />} />
     <Route path="/chat" element={<Chat />} />
     </Routes>
     </BrowserRouter>
