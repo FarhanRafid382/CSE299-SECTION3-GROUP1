@@ -28,3 +28,11 @@ step 11: to see things in django-admin register everything in app/admin:
 step 12: now write serizlizers:
         create serizlizers.py file on apps then serizlize
         the models of that app.
+step 13: write permissions; first write a global permission.py
+        then use it else where.
+Step 14: write urls and views
+        what views do:
+        They take a user's web request in, 
+        figure out what to do with the database, 
+        and hand a response back.
+
