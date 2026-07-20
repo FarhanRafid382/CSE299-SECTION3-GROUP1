@@ -1,38 +1,58 @@
-import { useParams } from "react-router-dom";
-
-const products = [
-  { id: 1, name: "Product 1", price: 10.99, categoryId: 1 },
-  { id: 2, name: "Product 2", price: 15.99, categoryId: 2 },
-  { id: 3, name: "Product 3", price: 20.99, categoryId: 1 },
-  { id: 4, name: "Product 4", price: 25.99, categoryId: 3 },
-  { id: 5, name: "Product 5", price: 30.99, categoryId: 2 },
-];
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 
 function CategoryDetail({ addToCart }) {
   const { id } = useParams();
-  const filteredProducts = products.filter((product) => product.categoryId === parseInt(id));
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:8000/api/store/products/?category=${id}`)
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => {
+        console.error("Error fetching category products:", error);
+        setProducts([]);
+      });
+  }, [id]);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Category Products</h1>
-      {filteredProducts.length === 0 ? (
-        <p className="text-gray-600">No products in this category.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-gray-800">{product.name}</h3>
-              <p className="text-gray-600 mt-1">৳{product.price.toFixed(2)}</p>
-              <button
-                onClick={() => addToCart(product)}
-                className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                Add to Cart
-              </button>
-            </div>
-          ))}
+    <div className="bg-white min-h-screen">
+      <div className="bg-gray-950 py-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <Link to="/categories" className="text-indigo-400 text-sm font-semibold hover:underline mb-2 inline-block">
+            ← Back to Categories
+          </Link>
+          <h1 className="text-4xl font-bold text-white">Category Products</h1>
         </div>
-      )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        {products.length === 0 ? (
+          <p className="text-gray-500 text-center py-16">No products in this category.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <div key={product.id} className="group">
+                <div className="w-full h-56 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl mb-4 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/5 transition"></div>
+                </div>
+                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-1">
+                  {product.name}
+                </h3>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-900 font-bold">৳{product.price}</p>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
