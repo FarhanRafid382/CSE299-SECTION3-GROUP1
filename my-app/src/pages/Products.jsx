@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function Products({ addToCart }) {
+function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -9,8 +9,29 @@ function Products({ addToCart }) {
     fetch("http://127.0.0.1:8000/api/store/products/")
       .then((response) => response.json())
       .then((data) => setProducts(data))
-      .catch((error) => console.error("Error fetching products:", error));
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setProducts([
+          { id: 1, name: "Product 1", price: 10.99 },
+          { id: 2, name: "Product 2", price: 15.99 },
+        ]);
+      });
   }, []);
+
+  function addToCart(product) {
+    const token = localStorage.getItem("accessToken");
+    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product: product.id, quantity: 1 }),
+    })
+      .then((response) => response.json())
+      .then(() => alert(`${product.name} added to cart!`))
+      .catch((error) => console.error("Error adding to cart:", error));
+  }
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
@@ -47,7 +68,7 @@ function Products({ addToCart }) {
                 </h3>
               </Link>
               <div className="flex items-center justify-between">
-                <p className="text-gray-900 font-bold">৳{product.price.toFixed(2)}</p>
+                <p className="text-gray-900 font-bold">৳{product.price}</p>
                 <button
                   onClick={() => addToCart(product)}
                   className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"

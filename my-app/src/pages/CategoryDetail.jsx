@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
-function CategoryDetail({ addToCart }) {
+function CategoryDetail() {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
 
@@ -14,6 +14,21 @@ function CategoryDetail({ addToCart }) {
         setProducts([]);
       });
   }, [id]);
+
+  function addToCart(product) {
+    const token = localStorage.getItem("accessToken");
+    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product: product.id, quantity: 1 }),
+    })
+      .then((response) => response.json())
+      .then(() => alert(`${product.name} added to cart!`))
+      .catch((error) => console.error("Error adding to cart:", error));
+  }
 
   return (
     <div className="bg-white min-h-screen">

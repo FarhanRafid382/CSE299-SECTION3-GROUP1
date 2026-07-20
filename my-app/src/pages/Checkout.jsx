@@ -1,18 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
-function Checkout({ cart }) {
+function Checkout() {
+  const [cart, setCart] = useState([]);
   const [shippingAddress, setShippingAddress] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => response.json())
+      .then((data) => setCart(data))
+      .catch((error) => {
+        console.error("Error fetching cart:", error);
+        setCart([]);
+      });
+  }, []);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const token = localStorage.getItem("accessToken");
-
     try {
       const response = await fetch("http://127.0.0.1:8000/api/orders/orders/", {
         method: "POST",
@@ -26,7 +39,6 @@ function Checkout({ cart }) {
           payment_method: paymentMethod,
         }),
       });
-
       if (response.ok) {
         navigate("/orders");
       } else {
