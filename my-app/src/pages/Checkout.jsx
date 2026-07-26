@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { API_BASE, getAuthHeaders, getJsonHeaders } from "../apiConfig";
 
 function Checkout() {
   const [cart, setCart] = useState([]);
   const [shippingAddress, setShippingAddress] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch(`${API_BASE}/api/cart/cart-items/`, {
+      headers: getAuthHeaders(),
     })
       .then((response) => response.json())
       .then((data) => setCart(data))
@@ -21,18 +22,23 @@ function Checkout() {
       });
   }, []);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  function calculateShippingCost(address) {
+    const normalized = (address || '').trim().toLowerCase();
+    if (!normalized) return 0;
+    return normalized.includes('dhaka') ? 70 : 140;
+  }
+
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shippingCost = calculateShippingCost(shippingAddress);
+  const total = subtotal + shippingCost;
 
   async function handleSubmit(e) {
     e.preventDefault();
     const token = localStorage.getItem("accessToken");
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/orders/orders/", {
+      const response = await fetch(`${API_BASE}/api/orders/orders/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getJsonHeaders(),
         body: JSON.stringify({
           shipping_address: shippingAddress,
           billing_address: billingAddress,
@@ -71,9 +77,19 @@ function Checkout() {
                 <span className="font-medium">৳{(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
-            <div className="border-t border-gray-200 pt-3 flex justify-between">
-              <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-gray-900 text-lg">৳{total.toFixed(2)}</span>
+            <div className="border-t border-gray-200 pt-3 space-y-3">
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>Subtotal</span>
+                <span className="font-medium">৳{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>Shipping</span>
+                <span className="font-medium">৳{shippingCost.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-semibold text-gray-900">Total</span>
+                <span className="font-bold text-gray-900 text-lg">৳{total.toFixed(2)}</span>
+              </div>
             </div>
           </div>
         </div>

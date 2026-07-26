@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE, getAuthHeaders } from "../apiConfig";
 
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    fetch("http://127.0.0.1:8000/api/orders/orders/", {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch(`${API_BASE}/api/orders/orders/`, {
+      headers: getAuthHeaders(),
     })
       .then((response) => response.json())
       .then((data) => setOrders(data))
@@ -50,6 +50,7 @@ function OrderHistory() {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-gray-900">৳{order.total_amount}</p>
+                  <p className="text-sm text-gray-400">Includes shipping ৳{order.shipping_cost}</p>
                   <p className="text-sm text-gray-400">View details →</p>
                 </div>
               </Link>

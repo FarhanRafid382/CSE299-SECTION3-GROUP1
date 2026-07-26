@@ -42,11 +42,15 @@ class Order(models.Model):
     def subtotal(self):
         return sum(item.total for item in self.items.all())
     
-    @property#@property turns a method into a virtual attribute that can be accessed like a field.
+    @property
     def shipping_cost(self):
-        """Calculate shipping cost based on address"""
-        # Check if shipping address contains Dhaka
-        if 'Dhaka' in self.shipping_address or 'dhaka' in self.shipping_address.lower():
+        """Calculate shipping cost based on address."""
+        address = (self.shipping_address or '').strip()
+        if not address:
+            return Decimal('0.00')
+
+        normalized_address = address.lower()
+        if 'dhaka' in normalized_address:
             return Decimal('70.00')  # Inside Dhaka
         return Decimal('140.00')  # Outside Dhaka
     

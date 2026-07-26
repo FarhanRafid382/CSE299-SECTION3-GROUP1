@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { API_BASE, getAuthHeaders } from "../apiConfig";
 
 function OrderDetail() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    fetch(`http://127.0.0.1:8000/api/orders/orders/${id}/`, {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch(`${API_BASE}/api/orders/orders/${id}/`, {
+      headers: getAuthHeaders(),
     })
       .then((response) => response.json())
       .then((data) => setOrder(data))
@@ -53,9 +53,17 @@ function OrderDetail() {
         </div>
 
         <div className="md:col-span-3">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Total</h2>
-          <div className="bg-gray-50 rounded-2xl p-6">
-            <div className="flex justify-between">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Order summary</h2>
+          <div className="bg-gray-50 rounded-2xl p-6 space-y-3">
+            <div className="flex justify-between text-sm text-gray-700">
+              <span>Subtotal</span>
+              <span className="font-medium">৳{order.subtotal}</span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-700">
+              <span>Shipping</span>
+              <span className="font-medium">৳{order.shipping_cost}</span>
+            </div>
+            <div className="border-t border-gray-200 pt-3 flex justify-between">
               <span className="font-semibold text-gray-900">Total</span>
               <span className="font-bold text-gray-900 text-lg">৳{order.total_amount}</span>
             </div>

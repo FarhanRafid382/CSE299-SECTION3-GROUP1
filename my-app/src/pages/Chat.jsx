@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE, getJsonHeaders } from "../apiConfig";
 
 function Chat() {
   const [message, setMessage] = useState("");
@@ -14,12 +15,19 @@ function Chat() {
     setMessage("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/ai/chat/", {
+      const response = await fetch(`${API_BASE}/api/ai/chat/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getJsonHeaders(),
         body: JSON.stringify({ message: userMessage }),
       });
+
       const data = await response.json();
+      if (!response.ok) {
+        const errorText = data.detail || data.message || "Unable to send chat message.";
+        setMessages((prev) => [...prev, { sender: "AI", text: errorText }]);
+        return;
+      }
+
       setMessages((prev) => [...prev, { sender: "AI", text: data.reply }]);
     } catch (error) {
       setMessages((prev) => [...prev, { sender: "AI", text: "Unable to connect to the server." }]);
