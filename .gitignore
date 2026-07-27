@@ -1,1 +1,12 @@
-﻿**/node_modules/
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.idea/
+.DS_Store
+*.zip
+superuser.txt
+backup-before-chatbot/
+
+supersuer.txt

@@ -1,0 +1,17 @@
+BACKEND
+cd "D:\BestCommerce\CSE299-SECTION3-GROUP1-rahatlatest\CSE299-SECTION3-GROUP1-rahat"
+
+.\.venv\Scripts\Activate.ps1
+
+python manage.py runserver
+
+IF BLOCKED:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+.\.venv\Scripts\Activate.ps1
+
+
+FRONTEND
+cd "D:\BestCommerce\CSE299-SECTION3-GROUP1-Shakib-FrontendLatest\CSE299-SECTION3-GROUP1-Shakib-Frontend\my-app"
+
+npm run dev
