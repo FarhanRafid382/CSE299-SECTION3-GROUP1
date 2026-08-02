@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-4nf56@#w5#p_3$t3zwg&i+5%ulfej5^q=2&$6oolk%acbe_%yy
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # ==============================================================================
 # APPLICATION DEFINITION
@@ -111,6 +111,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Standard Create-React-App port
     "http://localhost:5173",  # Standard Vite-React development port
+    "http://127.0.0.1:5173",  # Local Vite dev server on loopback
 ]
 
 # ==============================================================================

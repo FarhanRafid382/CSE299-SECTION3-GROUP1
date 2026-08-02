@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { API_BASE } from "../apiConfig";
 
 function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/store/products/${id}/`)
+    fetch(`${API_BASE}/api/store/products/${id}/`)
       .then((response) => response.json())
       .then((data) => setProduct(data))
       .catch((error) => console.error("Error fetching product:", error));
@@ -14,7 +15,7 @@ function ProductDetail() {
 
   function addToCart() {
     const token = localStorage.getItem("accessToken");
-    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
+    fetch(`${API_BASE}/api/cart/cart-items/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

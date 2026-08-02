@@ -51,6 +51,16 @@ class CartItemSerializer(serializers.ModelSerializer):
 
         return cart_item
 
+    def update(self, instance, validated_data):
+        quantity = validated_data.get('quantity')
+        if quantity is not None:
+            if quantity <= 0:
+                instance.delete()
+                return instance
+            instance.quantity = quantity
+            instance.save()
+        return instance
+
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)

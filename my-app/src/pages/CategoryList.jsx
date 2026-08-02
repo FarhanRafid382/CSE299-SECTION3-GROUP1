@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE } from "../apiConfig";
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/store/categories/")
+    fetch(`${API_BASE}/api/store/categories/`)
       .then((response) => response.json())
       .then((data) => setCategories(data))
       .catch((error) => {

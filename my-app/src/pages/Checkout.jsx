@@ -22,14 +22,12 @@ function Checkout() {
       });
   }, []);
 
-  function calculateShippingCost(address) {
-    const normalized = (address || '').trim().toLowerCase();
-    if (!normalized) return 0;
-    return normalized.includes('dhaka') ? 70 : 140;
+  function calculateShippingCost() {
+    return 120;
   }
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shippingCost = calculateShippingCost(shippingAddress);
+  const shippingCost = calculateShippingCost();
   const total = subtotal + shippingCost;
 
   async function handleSubmit(e) {

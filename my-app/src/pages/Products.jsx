@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE } from "../apiConfig";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/store/products/")
+    fetch(`${API_BASE}/api/store/products/`)
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => {
@@ -20,7 +21,7 @@ function Products() {
 
   function addToCart(product) {
     const token = localStorage.getItem("accessToken");
-    fetch("http://127.0.0.1:8000/api/cart/cart-items/", {
+    fetch(`${API_BASE}/api/cart/cart-items/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
