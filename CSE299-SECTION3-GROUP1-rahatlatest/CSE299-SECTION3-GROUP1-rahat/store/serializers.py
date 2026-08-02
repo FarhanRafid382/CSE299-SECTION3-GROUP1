@@ -43,6 +43,32 @@ class InventorySerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'quantity_change', 'reason', 'note', 'created_by', 'created_at']
         read_only_fields = ['created_by', 'created_at']
 
+class PublicProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True, read_only=True)
+    availability = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'category',
+            'name',
+            'slug',
+            'description',
+            'price',
+            'compare_price',
+            'image',
+            'is_featured',
+            'images',
+            'availability',
+        ]
+
+    def get_availability(self, product):
+        if product.stock <= 0:
+            return "Out of stock"
+
+        return "Available"
+
 
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
