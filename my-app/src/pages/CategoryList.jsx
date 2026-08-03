@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { API_BASE } from "../apiConfig";
+import { API_BASE, getImageUrl } from "../apiConfig";
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -12,9 +12,9 @@ function CategoryList() {
       .catch((error) => {
         console.error("Error fetching categories:", error);
         setCategories([
-          { id: 1, name: "Clothing" },
-          { id: 2, name: "Electronics" },
-          { id: 3, name: "Home Goods" },
+          { id: 1, name: "Clothing", description: "Fashion and apparel." },
+          { id: 2, name: "Electronics", description: "Latest devices and gadgets." },
+          { id: 3, name: "Home Goods", description: "Essentials for every room." },
         ]);
       });
   }, []);
@@ -34,12 +34,25 @@ function CategoryList() {
             <Link
               key={category.id}
               to={`/categories/${category.id}`}
-              className="group relative h-48 rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-700 flex items-end p-6"
+              className="group overflow-hidden rounded-3xl border border-gray-200 shadow-sm bg-white transition hover:-translate-y-1"
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <h3 className="relative text-white text-xl font-bold group-hover:text-indigo-300 transition">
-                {category.name}
-              </h3>
+              <div className="w-full h-56 overflow-hidden bg-gray-100">
+                {category.image ? (
+                  <img
+                    src={getImageUrl(category.image)}
+                    alt={category.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-violet-600" />
+                )}
+              </div>
+              <div className="p-6">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">{category.name}</h3>
+                <p className="text-sm text-gray-600">
+                  {category.description || "Explore products from this category."}
+                </p>
+              </div>
             </Link>
           ))}
         </div>

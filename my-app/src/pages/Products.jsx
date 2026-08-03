@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { API_BASE } from "../apiConfig";
+import { API_BASE, getImageUrl } from "../apiConfig";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -38,6 +38,14 @@ function Products() {
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  function getProductImage(product) {
+    return (
+      getImageUrl(product.image) ||
+      getImageUrl(product.images?.[0]?.image) ||
+      `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`
+    );
+  }
+
   return (
     <div className="bg-white min-h-screen">
       <div className="bg-gray-950 py-16">
@@ -59,23 +67,34 @@ function Products() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="group">
+            <div key={product.id} className="group bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
               <Link to={`/products/${product.id}`}>
-                <div className="w-full h-56 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl mb-4 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/5 transition"></div>
+                <div className="w-full h-56 overflow-hidden bg-gray-100">
+                  <img
+                    src={getProductImage(product)}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                 </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-1">
-                  {product.name}
-                </h3>
               </Link>
-              <div className="flex items-center justify-between">
-                <p className="text-gray-900 font-bold">৳{product.price}</p>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
-                >
-                  Add to Cart
-                </button>
+              <div className="p-6">
+                <Link to={`/products/${product.id}`}>
+                  <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-3">
+                    {product.name}
+                  </h3>
+                </Link>
+                <p className="text-sm text-gray-600 mb-4 min-h-[3rem]">
+                  {product.description || "No description available."}
+                </p>
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-gray-900 font-bold">৳{product.price}</p>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           ))}

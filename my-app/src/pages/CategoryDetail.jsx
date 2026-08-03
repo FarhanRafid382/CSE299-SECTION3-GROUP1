@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { API_BASE } from "../apiConfig";
+import { API_BASE, getImageUrl } from "../apiConfig";
 
 function CategoryDetail() {
   const { id } = useParams();
+  const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/store/categories/${id}/`)
+      .then((response) => response.json())
+      .then((data) => setCategory(data))
+      .catch((error) => {
+        console.error("Error fetching category:", error);
+        setCategory(null);
+      });
+  }, [id]);
 
   useEffect(() => {
     fetch(`${API_BASE}/api/store/products/?category=${id}`)
@@ -15,6 +26,14 @@ function CategoryDetail() {
         setProducts([]);
       });
   }, [id]);
+
+  function getProductImage(product) {
+    return (
+      getImageUrl(product.image) ||
+      getImageUrl(product.images?.[0]?.image) ||
+      `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`
+    );
+  }
 
   function addToCart(product) {
     const token = localStorage.getItem("accessToken");
@@ -38,7 +57,10 @@ function CategoryDetail() {
           <Link to="/categories" className="text-indigo-400 text-sm font-semibold hover:underline mb-2 inline-block">
             ← Back to Categories
           </Link>
-          <h1 className="text-4xl font-bold text-white">Category Products</h1>
+          <h1 className="text-4xl font-bold text-white">{category?.name || "Category Products"}</h1>
+          {category?.description && (
+            <p className="mt-4 max-w-3xl text-gray-300">{category.description}</p>
+          )}
         </div>
       </div>
 
@@ -48,21 +70,34 @@ function CategoryDetail() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {products.map((product) => (
-              <div key={product.id} className="group">
-                <div className="w-full h-56 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl mb-4 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/5 transition"></div>
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-1">
-                  {product.name}
-                </h3>
-                <div className="flex items-center justify-between">
-                  <p className="text-gray-900 font-bold">৳{product.price}</p>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
-                  >
-                    Add to Cart
-                  </button>
+              <div key={product.id} className="group bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+                <Link to={`/products/${product.id}`}>
+                  <div className="w-full h-56 overflow-hidden bg-gray-100">
+                    <img
+                      src={getProductImage(product)}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                </Link>
+                <div className="p-6">
+                  <Link to={`/products/${product.id}`}>
+                    <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-2">
+                      {product.name}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-gray-600 mb-4 min-h-[3rem]">
+                    {product.description || "No description available."}
+                  </p>
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-gray-900 font-bold">৳{product.price}</p>
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
