@@ -29,7 +29,7 @@ function Chat() {
       }
 
       setMessages((prev) => [...prev, { sender: "AI", text: data.reply }]);
-    } catch (error) {
+    } catch {
       setMessages((prev) => [...prev, { sender: "AI", text: "Unable to connect to the server." }]);
     }
   }

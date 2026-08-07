@@ -1,9 +1,25 @@
+import { useState, useEffect } from "react";
+import { API_BASE, getImageUrl } from "../apiConfig";
+
 function Home() {
-  const featuredProducts = [
-    { id: 1, name: "Product 1", price: 10.99 },
-    { id: 2, name: "Product 2", price: 15.99 },
-    { id: 3, name: "Product 3", price: 20.99 },
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([
+   
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/store/products/`)
+      .then((response) => response.json())
+      .then((data) => {
+        const products = Array.isArray(data) ? data : [];
+        const featured = products.filter((product) => product.is_featured);
+        setFeaturedProducts(featured.length ? featured : products.slice(0, 3));
+      })
+      .catch((error) => {
+        console.error("Error fetching featured products:", error);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="bg-white">
@@ -58,13 +74,33 @@ function Home() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {featuredProducts.map((product) => (
-            <div key={product.id} className="group cursor-pointer">
-              <div className="w-full h-56 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl mb-4 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/5 transition"></div>
+            <div key={product.id} className="group cursor-pointer bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="w-full h-56 rounded-3xl mb-4 overflow-hidden bg-gray-100 relative">
+                {product.images?.[0]?.image ? (
+                  <img
+                    src={getImageUrl(product.images[0].image)}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : product.image ? (
+                  <img
+                    src={getImageUrl(product.image)}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-violet-600" />
+                )}
               </div>
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition">{product.name}</h3>
-                <p className="text-gray-900 font-bold">৳{product.price.toFixed(2)}</p>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition mb-2">{product.name}</h3>
+                <p className="text-sm text-gray-600 mb-4">{product.description || "No description available."}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-900 font-bold">৳{Number(product.price).toFixed(2)}</p>
+                  <a href={`/products/${product.id}`} className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition">
+                    View
+                  </a>
+                </div>
               </div>
             </div>
           ))}

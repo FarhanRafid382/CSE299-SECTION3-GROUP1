@@ -7,7 +7,7 @@ function Checkout() {
   const [shippingAddress, setShippingAddress] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,11 @@ function Checkout() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
+    if (!localStorage.getItem("accessToken")) {
+      setError("Please log in before placing an order.");
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE}/api/orders/orders/`, {
         method: "POST",
@@ -46,10 +50,11 @@ function Checkout() {
       if (response.ok) {
         navigate("/orders");
       } else {
-        console.error("Order failed:", await response.text());
+        setError("Order failed. Please verify your cart and try again.");
       }
     } catch (error) {
       console.error("Error placing order:", error);
+      setError("Unable to connect to the server.");
     }
   }
 
@@ -94,6 +99,7 @@ function Checkout() {
 
         <div className="md:col-span-3 order-1 md:order-2">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
             <div>
               <label className={labelClass}>Shipping Address</label>
               <input type="text" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} className={inputClass} required />

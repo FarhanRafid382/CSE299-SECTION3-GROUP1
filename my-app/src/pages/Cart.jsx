@@ -5,13 +5,11 @@ import { API_BASE, getAuthHeaders } from "../apiConfig";
 function Cart() {
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(localStorage.getItem("accessToken")));
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      setLoading(false);
-      setCart([]);
       return;
     }
 

@@ -29,8 +29,8 @@ function CategoryDetail() {
 
   function getProductImage(product) {
     return (
-      getImageUrl(product.image) ||
       getImageUrl(product.images?.[0]?.image) ||
+      getImageUrl(product.image) ||
       `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`
     );
   }

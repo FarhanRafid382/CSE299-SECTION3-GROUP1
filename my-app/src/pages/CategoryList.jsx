@@ -12,9 +12,7 @@ function CategoryList() {
       .catch((error) => {
         console.error("Error fetching categories:", error);
         setCategories([
-          { id: 1, name: "Clothing", description: "Fashion and apparel." },
-          { id: 2, name: "Electronics", description: "Latest devices and gadgets." },
-          { id: 3, name: "Home Goods", description: "Essentials for every room." },
+       
         ]);
       });
   }, []);

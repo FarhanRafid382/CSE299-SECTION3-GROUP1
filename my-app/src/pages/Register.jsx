@@ -30,7 +30,7 @@ function Register() {
       } else {
         setError("Registration failed. Please check your details.");
       }
-    } catch (err) {
+    } catch {
       setError("Unable to connect to the server.");
     }
   }

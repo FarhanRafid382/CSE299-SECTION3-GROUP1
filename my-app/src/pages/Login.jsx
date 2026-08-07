@@ -28,7 +28,7 @@ function Login() {
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
       navigate("/products");
-    } catch (err) {
+    } catch {
       setError("Unable to connect to the server.");
     }
   }

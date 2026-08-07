@@ -15,16 +15,26 @@ export function getJsonHeaders() {
 export function getImageUrl(image) {
   if (!image || typeof image !== "string") return "";
 
-  if (image.startsWith("http://") || image.startsWith("https://") || image.startsWith("data:")) {
+  if (
+    image.startsWith("http://") ||
+    image.startsWith("https://") ||
+    image.startsWith("data:")
+  ) {
     return image;
   }
 
-  const normalizedPath = image.startsWith("/") ? image.slice(1) : image;
   const base = API_BASE ? API_BASE.replace(/\/$/, "") : "";
 
-  if (normalizedPath.startsWith("media/")) {
-    return base ? `${base}/${normalizedPath}` : `/${normalizedPath}`;
+  if (image.startsWith("/media/")) {
+    return base ? `${base}${image}` : image;
   }
 
-  return base ? `${base}/media/${normalizedPath}` : `/media/${normalizedPath}`;
+  const normalizedPath = image.startsWith("/") ? image.slice(1) : image;
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+  if (normalizedPath.startsWith("media/")) {
+    return base ? `${base}/${normalizedPath}` : `${origin}/${normalizedPath}`;
+  }
+
+  return base ? `${base}/media/${normalizedPath}` : `${origin}/media/${normalizedPath}`;
 }

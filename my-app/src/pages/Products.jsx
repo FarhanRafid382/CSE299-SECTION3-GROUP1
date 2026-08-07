@@ -13,8 +13,7 @@ function Products() {
       .catch((error) => {
         console.error("Error fetching products:", error);
         setProducts([
-          { id: 1, name: "Product 1", price: 10.99 },
-          { id: 2, name: "Product 2", price: 15.99 },
+         
         ]);
       });
   }, []);
@@ -39,9 +38,9 @@ function Products() {
   );
 
   function getProductImage(product) {
+    const primaryImage = getImageUrl(product.images?.[0]?.image) || getImageUrl(product.image);
     return (
-      getImageUrl(product.image) ||
-      getImageUrl(product.images?.[0]?.image) ||
+      primaryImage ||
       `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`
     );
   }

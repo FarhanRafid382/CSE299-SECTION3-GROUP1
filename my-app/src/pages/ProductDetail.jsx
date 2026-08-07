@@ -5,7 +5,6 @@ import { API_BASE, getImageUrl } from "../apiConfig";
 function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
     fetch(`${API_BASE}/api/store/products/${id}/`)
@@ -31,12 +30,15 @@ function ProductDetail() {
 
   if (!product) return <p className="max-w-2xl mx-auto px-4 py-12 text-gray-600">Loading...</p>;
 
-  const images = [
-    getImageUrl(product.image),
-    ...(product.images || []).map((item) => getImageUrl(item.image)),
-  ].filter(Boolean);
-
   const placeholderImage = `https://via.placeholder.com/960x720?text=${encodeURIComponent(product.name)}`;
+
+  function getProductImage(productData) {
+    return (
+      getImageUrl(productData.images?.[0]?.image) ||
+      getImageUrl(productData.image) ||
+      placeholderImage
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
@@ -46,26 +48,12 @@ function ProductDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_0.9fr] gap-10 items-start">
         <div>
           <div className="w-full h-[28rem] rounded-3xl overflow-hidden bg-gray-100 mb-6">
-            {images.length ? (
-              <img src={images[activeImage]} alt={product.name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
-            )}
+            <img
+              src={getProductImage(product)}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
           </div>
-
-          {images.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {images.map((imageUrl, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveImage(index)}
-                  className={`w-24 h-24 rounded-3xl overflow-hidden border ${index === activeImage ? "border-indigo-600" : "border-gray-200"}`}
-                >
-                  <img src={imageUrl} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="space-y-6">
