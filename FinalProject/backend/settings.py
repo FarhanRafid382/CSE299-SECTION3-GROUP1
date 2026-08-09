@@ -77,7 +77,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "bestcommerce"),
         "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "PASSWORD"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "dragon_SLAYER363"),
         "HOST": os.getenv("POSTGRES_HOST", "127.0.0.1"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
@@ -99,7 +99,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'customer_chatbot': '10/min',
+        'admin_chatbot': '20/min',
+    },
 }
 
 # SimpleJWT token lifetime limits configuration
