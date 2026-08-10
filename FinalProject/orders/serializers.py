@@ -1,3 +1,5 @@
+import uuid
+
 from rest_framework import serializers
 
 from store.serializers import ProductSerializer
@@ -55,4 +57,54 @@ class OrderSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ['created_at', 'updated_at', 'subtotal', 'shipping_cost', 'total_amount']
+        read_only_fields = [
+            'user',
+            'order_number',
+            'status',
+            'created_at',
+            'updated_at',
+            'subtotal',
+            'shipping_cost',
+            'total_amount',
+        ]
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.user if request else None
+
+        if not user or not user.is_authenticated:
+            raise serializers.ValidationError('Authentication required to place an order.')
+
+        from cart.models import Cart, CartItem
+
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError('Cart is empty or does not exist.')
+
+        if not cart.items.exists():
+            raise serializers.ValidationError('Cart is empty.')
+
+        order = Order.objects.create(
+            user=user,
+            order_number=str(uuid.uuid4()).replace('-', '').upper()[:12],
+            tax=validated_data.get('tax', 0),
+            discount=validated_data.get('discount', 0),
+            shipping_address=validated_data.get('shipping_address', ''),
+            billing_address=validated_data.get('billing_address', ''),
+            payment_method=validated_data.get('payment_method', ''),
+            payment_status='pending',
+            notes=validated_data.get('notes', ''),
+        )
+
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.price_at_add,
+            )
+
+        cart.items.all().delete()
+
+        return order

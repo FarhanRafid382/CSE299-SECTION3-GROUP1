@@ -1,9 +1,41 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import Category, Product, ProductImage, Inventory
 
 
+class FlexibleImageField(serializers.ImageField):
+    def to_representation(self, value):
+        if not value:
+            return None
+
+        try:
+            name = value.name
+        except AttributeError:
+            return super().to_representation(value)
+
+        if isinstance(name, str) and (
+            name.startswith('http://')
+            or name.startswith('https://')
+            or name.startswith('data:')
+        ):
+            return name
+
+        media_url = settings.MEDIA_URL or '/media/'
+        if not media_url.endswith('/'):
+            media_url = f'{media_url}/'
+
+        if isinstance(name, str) and name.startswith('/'):
+            return name
+
+        if isinstance(name, str) and name.startswith(media_url):
+            return name
+
+        return f'{media_url}{name}'
+
+
 class CategorySerializer(serializers.ModelSerializer):
+    image = FlexibleImageField(required=False, allow_null=True)
     parent = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
         allow_null=True,
@@ -31,6 +63,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = FlexibleImageField(required=False, allow_null=True)
+
     class Meta:
         model = ProductImage
         fields = ['id', 'product', 'image', 'created_at']
@@ -45,6 +79,7 @@ class InventorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    image = FlexibleImageField(required=False, allow_null=True)
     images = ProductImageSerializer(many=True, read_only=True)
     inventory_logs = InventorySerializer(many=True, read_only=True)
 

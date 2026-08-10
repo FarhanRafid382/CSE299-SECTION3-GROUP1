@@ -22,11 +22,28 @@ function Checkout() {
       });
   }, []);
 
-  function calculateShippingCost() {
-    return 120;
-  }
+function getItemPrice(item) {
+  return Number(
+    item.price ??
+    item.price_at_add ??
+    item.product_detail?.price ??
+    0
+  );
+}
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+function calculateShippingCost() {
+  const address = shippingAddress.trim().toLowerCase();
+
+  if (!address) return 0;
+
+  return address.includes("dhaka") ? 70 : 140;
+}
+
+const subtotal = cart.reduce(
+  (sum, item) =>
+    sum + getItemPrice(item) * Number(item.quantity ?? 1),
+  0
+);
   const shippingCost = calculateShippingCost();
   const total = subtotal + shippingCost;
 
@@ -76,8 +93,13 @@ function Checkout() {
           <div className="bg-gray-50 rounded-2xl p-6 space-y-3">
             {cart.map((item) => (
               <div key={item.id} className="flex justify-between text-sm text-gray-700">
-                <span>{item.name} × {item.quantity}</span>
-                <span className="font-medium">৳{(item.price * item.quantity).toFixed(2)}</span>
+                  <span>
+                  {item.product_detail?.name || "Product"} × {item.quantity}
+                  </span>
+
+                <span className="font-medium">
+                  ৳{(getItemPrice(item) * Number(item.quantity ?? 1)).toFixed(2)}
+                </span>
               </div>
             ))}
             <div className="border-t border-gray-200 pt-3 space-y-3">
