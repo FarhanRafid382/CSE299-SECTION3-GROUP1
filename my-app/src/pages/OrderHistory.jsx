@@ -4,18 +4,21 @@ import { API_BASE, getAuthHeaders } from "../apiConfig";
 
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
+  const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
+    if (!token) return;
+
     fetch(`${API_BASE}/api/orders/orders/`, {
       headers: getAuthHeaders(),
     })
       .then((response) => response.json())
-      .then((data) => setOrders(data))
+      .then((data) => setOrders(Array.isArray(data) ? data : []))
       .catch((error) => {
         console.error("Error fetching orders:", error);
         setOrders([]);
       });
-  }, []);
+  }, [token]);
 
   return (
     <div className="bg-white min-h-screen">
@@ -27,7 +30,17 @@ function OrderHistory() {
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-16">
-        {orders.length === 0 ? (
+        {!token ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500 mb-6">Please log in to view your order history.</p>
+            <Link
+              to="/login"
+              className="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-600 transition"
+            >
+              Go to Login
+            </Link>
+          </div>
+        ) : orders.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-500 mb-6">No orders placed yet.</p>
             <Link to="/products" className="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-600 transition">
